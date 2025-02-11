@@ -27,16 +27,16 @@ const Header = () => {
   };
 
   return (
-    <header className="shadow-md py-4  bg-white relative">
+    <header className="shadow-md py-4 px-5 bg-white relative">
       <div className=" flex max-w-7xl mx-auto justify-between items-center">
         <Link to="/">
-          <div className="text-2xl font-bold">ClothingStore</div>
+          <div className="md:text-2xl font-bold">ClothingStore</div>
         </Link>
 
         <nav className="hidden md:flex space-x-8">
           <Link to="/" className="hover:border-b-2 hover:border-black text-lg font-semibold">Home</Link>
           <Link to="/shop" className="hover:border-b-2 hover:border-black text-lg font-semibold">Shop</Link>
-          <Link to="/aboutu" className="hover:border-b-2 hover:border-black text-lg font-semibold">About</Link>
+          <Link to="/about" className="hover:border-b-2 hover:border-black text-lg font-semibold">About</Link>
           <Link to="/contact" className="  hover:border-b-2 hover:border-black  text-lg font-semibold">Contact</Link>
         </nav>
 
@@ -54,13 +54,13 @@ const Header = () => {
                 to="/profile"
                 className="py-3 px-1 rounded "
               >
-                <FaUserLarge className="size-5 hover:scale-110 ease-in-out transform duration-200" />
+                <FaUserLarge className="md:size-5 hover:scale-110 ease-in-out transform duration-200" />
               </Link>
               <Link
                 to="/Cart"
                 className="py-[10px] px-1 rounded "
               >
-                <IoMdCart className="size-6  hover:scale-110 ease-in-out transform duration-200  " />
+                <IoMdCart className="md:size-6  hover:scale-110 ease-in-out transform duration-200  " />
               </Link>
               <button
                 onClick={handleLogout}
@@ -82,7 +82,7 @@ const Header = () => {
             {menuOpen ? (
               <p></p>
             ) : (
-              <HiOutlineMenu className="w-8 h-8" />
+              <HiOutlineMenu className="w-7 h-7" />
             )}
           </button>
         </div>

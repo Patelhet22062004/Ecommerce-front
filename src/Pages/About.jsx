@@ -9,7 +9,7 @@ const AboutPage = () => {
       <section className="relative bg-cover h-[60vh] text-white flex items-center justify-center" style={{ backgroundImage: "url('./public/about.jpg')" }}>
         <div className="absolute inset-0 bg-black opacity-40"></div>
         <div className="z-10 text-center px-6 py-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight tracking-tight">
+          <h1 className="text-3xl md:text-5xl font-extrabold mb-4 leading-tight tracking-tight">
             Stylish Clothing. Timeless Elegance.
           </h1>
           <p className="text-lg md:text-2xl mb-4">
@@ -62,7 +62,7 @@ const AboutPage = () => {
           </div>
           <div className="text-center">
             <img src="https://via.placeholder.com/150" alt="Affordable Pricing" className="mx-auto mb-4 w-16 h-16" />
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">Affordable Pricing</h3>
+            <h3 className="md:text-xl font-semibold text-gray-800 mb-2">Affordable Pricing</h3>
             <p className="text-lg text-gray-600">
               We believe fashion should be accessible, which is why we offer premium-quality clothing at competitive prices.
             </p>

@@ -11,7 +11,7 @@ const App = () => {
   };
 
   return (
-    <div className=''><Downheader/>
+    <div className=''><Downheader className=""/>
     <div className="flex  max-w-7xl mx-auto flex-wrap  min-h-screen">
       <Categor onCategorySelect={handleCategorySelect} />
       <div className="flex-1 p-6 bg-white">
