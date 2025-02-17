@@ -40,13 +40,13 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="mx-auto py-12 px-6">
+    <div className="mx-auto py-32  ">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-end mr-20">
           <img
             src={selectedImage}
             alt={product.name}
-            className="w-full max-w-lg border border-gray-300 rounded-lg"
+            className="w-fit max-w-lg border border-gray-300 rounded-lg"
           />
           <div className="flex mt-4 space-x-4">
             {product.images.map((img, index) => (
@@ -73,17 +73,12 @@ const ProductDetail = () => {
 
           {/* Buttons */}
           <div className="mt-8 flex space-x-4">
-            <button
-              className="bg-yellow-500 text-white py-2 px-6 rounded-md hover:bg-yellow-600 transition duration-300"
-              onClick={handleAddToCart}
-            >
+            <button className="bg-yellow-500 text-white py-2 px-6 rounded-md hover:bg-yellow-600 transition duration-300" onClick={handleAddToCart}>
               Add to Cart
             </button>
-            <Link to="/cart">
-              <button className="border-2 border-blue-500 text-blue-500 py-2 px-6 rounded-md hover:bg-blue-500 hover:text-white transition duration-300">
-                Buy Now
-              </button>
-            </Link>
+           <Link to='/cart'> <button className="border-2 border-blue-500 text-blue-500 py-2 px-6 rounded-md hover:bg-blue-500 hover:text-white transition duration-300"onClick={handleAddToCart}>
+              Buy Now
+            </button></Link> 
           </div>
         </div>
       </div>

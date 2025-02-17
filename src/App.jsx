@@ -15,6 +15,7 @@ import Cart from './Pages/Cart';
 import Checkout from './Pages/Checkout';
 import Myorder from './Pages/Myorder'
 import AboutPage from './Pages/About';
+import Orders from './Pages/orders';
 const App = () => {
   return (
 
@@ -40,7 +41,10 @@ const App = () => {
         <Route path='/checkout' element={<Checkout/>}/>
         <Route path='/myorder' element={<Myorder/>}/>
         <Route path='/about' element={<AboutPage/>}/>
+        <Route path='/orders' element={<Orders/>}/>
 
+
+        {/* Protected Routes */}
         {/* Protected Routes */}
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       </Routes>

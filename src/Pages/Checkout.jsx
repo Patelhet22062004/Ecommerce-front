@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Checkout = () => {
-  const [cart, setCart] = useState([]);
+  const [cartdata, setCart] = useState([]);
+  const [step, setStep] = useState(1);
+  const navigate =useNavigate()
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -11,9 +14,9 @@ const Checkout = () => {
     state: "",
     zip_code: "",
   });
+  const [orderDetails, setOrderDetails] = useState(null);
   const token = localStorage.getItem("access_token");
 
-  // Fetch cart items
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/cart/", {
@@ -23,206 +26,220 @@ const Checkout = () => {
       .catch((error) => console.error("Error fetching cart:", error));
   }, [token]);
 
-  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Submit order
-  const handlePlaceOrder = (e) => {
+ 
+  const handleSubmitDetails = (e) => {
     e.preventDefault();
-    axios
-      .post(
-        "http://127.0.0.1:8000/order/create/",
-        { headers: { Authorization: `Bearer ${token}` } },
-        { ...formData }
-      )
-      .then((response) => {
-        alert("Order placed successfully!");
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Error placing order:", error);
-        alert("Failed to place the order.");
-      });
+    setOrderDetails(formData);
+    setStep(2);
   };
 
-  const totalPrice = Array.isArray(cart)
-    ? cart.reduce(
-        (total, item) => total + item.total * item.quantity,
-        0
-      )
-    : 0;
+  const handlePayment = async () => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/payment/create/",
+        { amount: totalPrice }, // Send amount in the request body
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      const { order_id, key } = response.data;
+  
+      const options = {
+        key: key,
+        amount: totalPrice,
+        currency: "INR",
+        order_id: order_id,
+        name: "My Store",
+        description: "Complete your purchase",
+        handler: async function (paymentResponse) {
+          try {
+            // Send the Razorpay payment verification request with the correct structure
+            const verifyResponse = await axios.post(
+              "http://127.0.0.1:8000/payment/verify/",
+              {
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+              },
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+  
+            if (verifyResponse.data.status === "success") {
+              alert("Payment Successful! 🎉");
+              
+              // Save order to DB after successful payment
+              await saveOrderToDB(order_id, paymentResponse.razorpay_payment_id);
+  
+              // Redirect to the orders page
+              navigate("/orders");
+            } else {
+              alert("Payment Verification Failed!");
+            }
+          } catch (error) {
+            console.error("Verification error:", error);
+            alert("Payment verification failed. Please contact support.");
+          }
+        },
+        prefill: {
+          name: orderDetails?.full_name,
+          email: orderDetails?.email,
+        },
+        theme: { color: "#4CAF50" },
+      };
+  
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error("Payment error:", error);
+      alert("Something went wrong. Please try again.");
+    }
+  };
+  
+  // Save order to database after successful payment
+  const saveOrderToDB = async (order_id, payment_id) => {
+    try {
+      await axios.post(
+        "http://127.0.0.1:8000/order/create/",
+        {
+          ...orderDetails,
+          cart_items: cartdata,
+          razorpay_order_id: order_id,
+          payment_id: payment_id,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("Order placed successfully!");
+    } catch (error) {
+      console.error("Error saving order:", error);
+      alert("Failed to save the order.");
+    }
+  };
+  
+
+ 
+  const totalPrice = cartdata.reduce((total, item) => total + item.total * 1, 0);
 
   return (
-    <div className=" bg-stone-100 h-full p-6 lg:p-12">
-      <div className="max-w-7xl mx-auto ">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">
-        Checkout
-      </h1>
+    <div className="bg-gray-100 min-h-screen p-6 lg:p-12">
+      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-8">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+          Checkout
+        </h1>
 
-      {/* Cart Overview */}
-      <div className="flex flex-wrap md:flex-nowrap gap-8">
-    <div className="bg-white w-2/3 h-full flex flex-col ml-24 md:ml-0 shadow-md p-6 rounded-md">
-          <h2 className="text-2xl font-semibold mb-4">Shipping Details</h2>
-            <form onSubmit={handlePlaceOrder}>
-            <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor="full_name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="full_name"
-                  name="full_name"
-                  value={formData.full_name}
-                  onChange={handleInputChange}
-                  className="mt-1 px-2  py-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="mt-1 px-2 py-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="address"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Address
-                </label>
-                <textarea
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  className="mt-1 px-2 py-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  required
-                ></textarea>
-              </div>
-              {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> */}
-                <div>
-                  <label
-                    htmlFor="city"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    City
-                  </label>
+        <div className="grid md:grid-cols-2 gap-12">
+          <div className="bg-white shadow-md p-6 rounded-md">
+            {step === 1 ? (
+              <>
+                <h2 className="text-xl font-semibold mb-4">Enter Shipping Details</h2>
+                <form onSubmit={handleSubmitDetails} className="space-y-4">
                   <input
                     type="text"
-                    id="city"
+                    name="full_name"
+                    value={formData.full_name}
+                    onChange={handleInputChange}
+                    placeholder="Full Name"
+                    className="w-full p-2 border rounded-md"
+                    required
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="Email"
+                    className="w-full p-2 border rounded-md"
+                    required
+                  />
+                  <textarea
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    placeholder="Address"
+                    className="w-full p-2 border rounded-md"
+                    required
+                  ></textarea>
+                  <input
+                    type="text"
                     name="city"
                     value={formData.city}
                     onChange={handleInputChange}
-                    className="mt-1 px-2 py-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="City"
+                    className="w-full p-2 border rounded-md"
                     required
                   />
-                </div>
-                <div>
-                  <label
-                    htmlFor="state"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    State
-                  </label>
                   <input
                     type="text"
-                    id="state"
                     name="state"
                     value={formData.state}
                     onChange={handleInputChange}
-                    className="mt-1 px-2 py-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="State"
+                    className="w-full p-2 border rounded-md"
                     required
                   />
-                </div>
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="zip_code"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Zip Code
-                  </label>
                   <input
                     type="text"
-                    id="zip_code"
                     name="zip_code"
                     value={formData.zip_code}
                     onChange={handleInputChange}
-                    className="mt-1 px-2 py-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="Zip Code"
+                    className="w-full p-2 border rounded-md"
                     required
                   />
-                </div>
-              {/* </div> */}
-            </div>
-            <button
-              type="submit"
-              className="mt-6  text-white py-2 px-10 hover:bg-emerald-950 font-semibold border shadow rounded-md bg-emerald-800 transition duration-300"
-            >
-              Place Order
-            </button>
-          </form>
-        </div>
-        <div className=" md:w-1/3 w-2/3 md:mt-0 mt-10 bg-white ml-24 md:ml-0 shadow-md p-6 rounded-md">
-          <h2 className="text-2xl font-semibold mb-4">Cart Summary</h2>
-          {cart.length === 0 ? (
-            <p>Your cart is empty.</p>
-          ) : (
-            <ul className="space-y-6">
-              {cart.map((item) => (
-                <li key={item.id} className="flex items-center justify-between">
-                    <div className="flex flex-wrap md:flex-nowrap ">
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={`http://127.0.0.1:8000${item.product_image}`}
-                      alt={item.product_name}
-                      className="w-16 h-16 object-cover rounded-md"
-                    />
+                  <button
+                    type="submit"
+                    className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-800"
+                  >
+                    Proceed to Payment
+                  </button>
+                </form>
+              </>
+            ) : (
+              <>
+                <h2 className="text-xl font-semibold mb-4">Confirm Your Details</h2>
+                <p><strong>Name:</strong> {orderDetails.full_name}</p>
+                <p><strong>Email:</strong> {orderDetails.email}</p>
+                <p><strong>Address:</strong> {orderDetails.address}, {orderDetails.city}, {orderDetails.state} - {orderDetails.zip_code}</p>
+                <button
+                  onClick={handlePayment}
+                  className="w-full mt-6 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-800"
+                >
+                  Pay Now
+                </button>
+              </>
+            )}
+          </div>
+
+          <div className="bg-white shadow-md p-6 rounded-md">
+            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+            {cartdata.length === 0 ? (
+              <p>Your cart is empty.</p>
+            ) : (
+              <ul className="space-y-4">
+                {cartdata.map((item) => (
+                  <li key={item.id} className="flex justify-between border-b pb-2">
                     <div>
-                      <h3 className="text-lg font-semibold">
-                        {item.product_name}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        Quantity: {item.quantity}
-                      </p>
+                      <h3 className="text-lg font-semibold">{item.product_name}</h3>
+                      <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                     </div>
-                  </div>
-                  <div className="flex ml-36 ">
-                  <p className="text-lg  font-semibold text-gray-700">
-                    Rs {item.total * item.quantity}
-                  </p></div></div>
-                </li>
-              ))}
-            </ul>
-          )}
-          <div className="mt-6 flex justify-between text-xl font-semibold">
-            <span>Total :</span>
-            <span>Rs {totalPrice} </span>
+                    <p className="text-lg font-semibold text-gray-700">
+                      Rs {item.total}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="mt-6 flex justify-between text-xl font-semibold">
+              <span>Total:</span>
+              <span>Rs {totalPrice} </span>
+            </div>
           </div>
         </div>
-
-        {/* Checkout Form */}
-       
-      </div></div>
+      </div>
     </div>
-    
   );
 };
 

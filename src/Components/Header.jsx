@@ -88,15 +88,13 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Side Drawer for smaller screens */}
       <div
         className={`fixed inset-y-0 left-0 bg-white text-black  h-full  transform ${
           menuOpen ? 'translate-x-0' : '-translate-x-full'
         } transition-transform duration-300 ease-in-out z-50`}
       >
         <div className="flex flex-col h-full">
-          {/* Close Button */}
-          <div className="p-4 flex justify-between items-center bg-">
+          <div className="p-4 flex justify-between items-center">
             <span className="text-lg font-bold">Menu</span>
             <button
               onClick={() => setMenuOpen(false)}
@@ -106,7 +104,6 @@ const Header = () => {
             </button>
           </div>
 
-          {/* Menu Links */}
           <div className="p-6 flex justify-between">
             {!isAuthenticated ? (
               <Link
