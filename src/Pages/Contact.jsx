@@ -37,7 +37,7 @@ export default function Contact() {
         </ul>
     </div>
     </div>
-      <section className="mb-32">
+      <section className="mb-28">
         
         <div id="map" className="relative overflow-hidden bg-cover bg-[50%] bg-no-repeat">
          

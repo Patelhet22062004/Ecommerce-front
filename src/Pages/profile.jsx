@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from "react-redux";
+import { ToastContainer,toast } from 'react-toastify';
+import axiosInstance from '../service/Axiosconfig'
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -8,21 +11,21 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate()
-  const token = localStorage.getItem('access_token');
-  const userId = localStorage.getItem('userid');
+  const { userid, token ,IsAuthnticated} = useSelector((state) => state.auth);
+  // const dispatch = useDispatch();
+
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!token || !userId) {
+      
+      if (IsAuthnticated==false) {
         setError('User not authenticated. Please log in.');
         setLoading(false);
         return;
       }
-
+        console.log(userid,token)
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/user/profile/${userId}/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axiosInstance.get(`user/profile/${userid}/`);
         setProfile(response.data);
         setFormData(response.data);
         setLoading(false);
@@ -35,7 +38,7 @@ const Profile = () => {
     };
 
     fetchProfile();
-  }, [token, userId]);
+  }, [token, userid]);
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
@@ -48,40 +51,46 @@ const Profile = () => {
     e.preventDefault();
     setIsEditing(false);
     try {
-      const response = await axios.put(
-        `http://127.0.0.1:8000/user/profile/${userId}/`,
+      const response = await axiosInstance.put(
+        `user/profile/${userid}/`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setProfile(response.data);
-      
+      toast.success("profile updated successfully")
     } catch (err) {
       console.error('Error updating profile:', err);
-      alert('Failed to update profile. Please try again.');
+    toast.error("Failed to update profile. Please try again.")
+    
     }
   };
   const Handledelete = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.delete(
-        `http://127.0.0.1:8000/user/profile/${userId}/`,
+    if(
+      confirm("sure you have to Delete Account")
+
+    ){
+      const response = await axiosInstance.delete(
+        `user/profile/${userid}/`,
         { headers: { Authorization: `Bearer ${token}` } }
-      );
+      )
+      .then(()=>{
       setIsEditing(false)
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
       localStorage.removeItem('user')
       localStorage.removeItem('userid')
       navigate('/register')
-      alert("Account Delete Successfull")
-    } catch (err) {
-      console.error('Error Deleting profile:', err);
+      alert("Account Delete Successfull")})
+    .catch ((error)=> {
+      console.error('Error Deleting profile:', error.response);
       alert('Failed to deleting profile. Please try again.');
-    }
-  };
+    })}
+
+}
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (error) return <div className='flex justify-center items-center'>{error}</div>;
   return (
     <div className="bg-gray-100 flex justify-center items-center min-h-screen">
       <div className="bg-white w-full max-w-sm shadow-lg rounded-lg p-6">
@@ -194,7 +203,7 @@ const Profile = () => {
               </button>
           </form>
         )}
-      </div>
+      </div><ToastContainer/>
     </div>
   );
 };

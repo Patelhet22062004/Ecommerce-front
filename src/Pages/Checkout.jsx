@@ -40,6 +40,7 @@ const Checkout = () => {
 
   const handlePayment = async () => {
     try {
+      console.log(token)
       const response = await axios.post(
         "http://127.0.0.1:8000/payment/create/",
         { amount: totalPrice }, // Send amount in the request body

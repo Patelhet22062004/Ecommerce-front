@@ -1,5 +1,5 @@
 import React from 'react';
-import about from '../../public/abo.jpg'
+import about from '../../public/abou.jpg'
 import Footer from '../Components/Footer';
 
 const AboutPage = () => {

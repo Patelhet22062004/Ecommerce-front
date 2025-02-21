@@ -1,28 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUserLarge } from "react-icons/fa6";
 import { IoMdCart } from "react-icons/io";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
+import { CartContext } from "../CartContext";
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../redux/authSlice';
+import { IoIosLogOut } from "react-icons/io";
+
 
 const Header = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); // State for side menu
+  const { cart } = useContext(CartContext);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [count, setcount] = useState();// State for side menu
   const navigate = useNavigate();
+  const { userid, token } = useSelector(state => state.auth)
+  const dispatch = useDispatch()
+  const menuRef = useRef(null);
 
+  const [profileOpen, setProfileOpen] = useState(false);
+  const { quantity } = useSelector(state => state.cart);
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
     if (token) {
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
     }
-  }, [localStorage.getItem('access_token')]); // Dependency on the token
+  }, [localStorage.getItem('access_token')]);
+  useEffect(() => {
+    setcount(cart.length)
+  }, [cart])// Dependency on the token
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
 
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
+    dispatch(logout())
     setIsAuthenticated(false);
+    setMenuOpen(false)
     navigate('/login');
   };
 
@@ -40,7 +64,7 @@ const Header = () => {
           <Link to="/contact" className="  hover:border-b-2 hover:border-black  text-lg font-semibold">Contact</Link>
         </nav>
 
-        <div className="hidden md:flex space-x-4">
+        <div className="hidden md:flex ">
           {!isAuthenticated ? (
             <Link
               to="/login"
@@ -49,26 +73,42 @@ const Header = () => {
               Login
             </Link>
           ) : (
-            <>
-              <Link
-                to="/profile"
-                className="py-3 px-1 rounded "
-              >
-                <FaUserLarge className="md:size-5 hover:scale-110 ease-in-out transform duration-200" />
-              </Link>
+            <> 
               <Link
                 to="/Cart"
-                className="py-[10px] px-1 rounded "
+                className=" "
               >
                 <IoMdCart className="md:size-6  hover:scale-110 ease-in-out transform duration-200  " />
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="text-gray-800 bg-gray-200 py-2 px-4 rounded text-lg hover:scale-90 ease-in-out transform duration-200"
+                </Link> 
+              <div
+                className="relative "
+                onMouseEnter={() => setProfileOpen(true)}
+                onMouseLeave={() => setProfileOpen(false)}
               >
-                Logout
-              </button>
-             
+                <FaUserLarge className="md:size-5 ml-5 mb-3 items-center flex justify-center  hover:scale-110 ease-in-out transform duration-200 cursor-pointer" />
+
+                {profileOpen && (
+                  <div className="absolute right-0 z-40 w-40  bg-white shadow-lg rounded-lg border border-gray-200 transition-opacity duration-200">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 font-bold text-gray-700 hover:bg-gray-100"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      Account
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setProfileOpen(false);
+                      }}
+                      className=" w-full flex text-left px-4 py-2 font-bold text-gray-700 hover:bg-gray-100"
+                    >
+                      <IoIosLogOut className='size-6 pr-1'/>
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>
@@ -87,11 +127,11 @@ const Header = () => {
           </button>
         </div>
       </div>
+          
+      <div           ref={menuRef}
 
-      <div
-        className={`fixed inset-y-0 left-0 bg-white text-black  h-full  transform ${
-          menuOpen ? 'translate-x-0' : '-translate-x-full'
-        } transition-transform duration-300 ease-in-out z-50`}
+        className={`fixed inset-y-0 left-0 bg-white text-black  h-full  transform ${menuOpen ? 'translate-x-0' : '-translate-x-full'
+          } transition-transform duration-300 ease-in-out z-50`}
       >
         <div className="flex flex-col h-full">
           <div className="p-4 flex justify-between items-center">
@@ -115,25 +155,33 @@ const Header = () => {
               </Link>
             ) : (
               <>
-                 <Link
-                to="/profile"
-                className="py-3 px-1 rounded hover:scale-110 ease-in-out transform duration-200"
-              >
-                <FaUserLarge className="size-5" />
-              </Link>
-              <Link
-                to="/cart"
-                className="py-[10px] md:px-1 pr-20 rounded"
-              >
-                <IoMdCart className="size-6" />
-              </Link>
-              <button
-                onClick={handleLogout}
-                setMenuOpen={false}
-                className="text-gray-800  bg-gray-200 py-2 px-4 rounded text-lg hover:scale-90 ease-in-out transform duration-200"
-              >
-                Logout
-              </button>
+                <Link
+                  to="/profile"
+                  className="py-3 px-1 rounded hover:scale-110 ease-in-out transform duration-200"
+                  onClick={() => setMenuOpen(false)}
+
+                >
+                  <FaUserLarge className="size-5" />
+                </Link>
+                <Link
+                  to="/cart"
+                  className="py-[10px] md:px-1 pr-20 relative rounded"
+                  onClick={() => setMenuOpen(false)}
+
+                >
+                  <IoMdCart className="size-6 " />
+                  {count > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-2">
+                      {quantity}
+                    </span>)}
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  setMenuOpen={false}
+                  className="text-gray-800  bg-gray-200 py-2 px-4 rounded text-lg hover:scale-90 ease-in-out transform duration-200"
+                >
+                  Logout
+                </button>
               </>
             )}
           </div>

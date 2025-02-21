@@ -18,7 +18,7 @@ const MyOrders = () => {
     }
 
     axios
-      .get("http://127.0.0.1:8000/orders/", {
+      .get("http://127.0.0.1:8000/payment/orders/", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -41,19 +41,15 @@ const MyOrders = () => {
           {orders.map((order) => (
             <li key={order.id} className="mb-6">
               <h3 className="text-xl font-semibold">Order #{order.id}</h3>
+              <p>user: {order.username}</p>
               <p>Status: {order.status}</p>
-              <p>Total Price: Rs {order.total_price}</p>
+
+              <p>Total Price: Rs {order.amount}</p>
               <p>Placed on: {new Date(order.created_at).toLocaleString()}</p>
 
               <h4 className="text-lg font-semibold mt-4">Items:</h4>
               <ul>
-                {order.items.map((item) => (
-                  <li key={item.id} className="mb-2">
-                    <p>Product: {item.product.name}</p>
-                    <p>Quantity: {item.quantity}</p>
-                    <p>Price: Rs {item.price}</p>
-                  </li>
-                ))}
+                
               </ul>
 
               <button

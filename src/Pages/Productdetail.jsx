@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast,ToastContainer } from "react-toastify";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -40,29 +43,38 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="mx-auto py-32  ">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div className="flex flex-col items-end mr-20">
+    <div className="mx-auto py-32 ">
+      <div className="flex flex-wrap justify-center  gap-20">
+        <div className="flex flex-col justify-center ">
           <img
             src={selectedImage}
             alt={product.name}
             className="w-fit max-w-lg border border-gray-300 rounded-lg"
           />
-          <div className="flex mt-4 space-x-4">
-            {product.images.map((img, index) => (
-              <img
-                key={index}
-                src={img.image}
-                alt={product.name}
-                className="md:w-20 md:h-20 w-16 object-cover border border-gray-300 rounded cursor-pointer"
-                onClick={() => setSelectedImage(img.image)}
-              />
-            ))}
+          <div className="flex mt-4 justify-center space-x-4">
+          <Swiper
+        modules={[Navigation]}
+        spaceBetween={10}
+        slidesPerView={3}
+        navigation
+        autoplay
+        className="mt-4 w-64"
+      >
+        {product.images.map((img, index) => (
+          <SwiperSlide key={index}>
+            <img
+              src={img.image}
+              alt={product.name}
+              className="w-20 h-20 object-cover border border-gray-300 rounded cursor-pointer"
+              onClick={() => setSelectedImage(img.image)}
+            />
+          </SwiperSlide>
+        ))}
+      </Swiper>
           </div>
         </div>
 
-        {/* Product Details */}
-        <div className="flex flex-col">
+         <div className="flex flex-col ">
           <h1 className="text-3xl font-semibold text-gray-800">{product.name}</h1>
           <h2 className="text-xl text-gray-600 mt-2">{product.brand}</h2>
           <p className="text-lg mt-4 text-gray-800">{product.description}</p>
@@ -76,12 +88,13 @@ const ProductDetail = () => {
             <button className="bg-yellow-500 text-white py-2 px-6 rounded-md hover:bg-yellow-600 transition duration-300" onClick={handleAddToCart}>
               Add to Cart
             </button>
-           <Link to='/cart'> <button className="border-2 border-blue-500 text-blue-500 py-2 px-6 rounded-md hover:bg-blue-500 hover:text-white transition duration-300"onClick={handleAddToCart}>
+           <Link to='/cart'> <button className="border-2 hover:shadow-lg border-blue-500 text-blue-500 py-2 px-6 rounded-md hover:bg-blue-500 hover:text-white transition duration-300"onClick={handleAddToCart}>
               Buy Now
             </button></Link> 
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 };

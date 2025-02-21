@@ -1,45 +1,65 @@
 import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import { motion } from "framer-motion";
-import axios from "axios";
-
+import axios, { AxiosError } from "axios";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Footer from "../Components/Footer";
-import { Link } from "react-router-dom";
-
+import { Link, redirect, useNavigate } from "react-router-dom";
+import { useSelector,useDispatch } from 'react-redux';
+import { logout } from '../redux/authSlice';
 const Home = () => {
   const [products, setProducts] = useState([]);
-  const token = localStorage.getItem('access_token');
-
-  // Fetch products from the API
+  const {token,userid}=useSelector(state=>state.auth)
+  const dispatch =useDispatch()
+  const navigate=useNavigate()
   useEffect(() => {
-    
-    
-    axios.get("http://localhost:8000/products/", {
-      headers: { Authorization: `Bearer ${token}` },
-    })// Replace with your API endpoint
+     axios.get("http://localhost:8000/products/"
+    )
       .then((response) => {
         setProducts(response.data);
       })
-      .catch((error) => console.error("Error fetching products:", error));
+      .catch((error) =>{
+        if(error.response.status==401){
+             dispatch(logout())
+                  }
+         console.error("Error fetching products:",error)
+       
+      });
   }, []);
+  useEffect(()=>{
+    axios.get(`http://127.0.0.1:8000/user/profile/${userid}/`,
+{      headers: { Authorization: `Bearer ${token}` },
+}
+    )
+      .then((response) => {
+        console.log(response.data.data)
+        if(response.data.isadmin){
+          navigate('/dashboard')
+        }
+        setProducts(response.data);
+      })
+      .catch((error) =>{
+       
+         console.error("Error fetching :",error)
+       
+      });
+  }
+  ,[])
 
-  // Slider settings for the banner
   const sliderSettings = {
-    dots: true,
     infinite: true,
     speed: 500,
+    navigator,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: false,
-    autoplaySpeed: 5000,
+    autoplay: true,
+    autoplaySpeed: 3000,
   };
 
   return (
     <div className="">
       
-      {/* Banner Section with Slider */}
       <div className="relative bg-gray-50 overflow-hidden ">
         <Slider {...sliderSettings}>
           {[1, 2].map((slide, index) => (
@@ -71,14 +91,14 @@ const Home = () => {
             >
               Upgrade your wardrobe with our latest collection.
             </motion.p>
-            <motion.button
+           <Link to='/shop'> <motion.button
               initial={{ y: 100 ,opacity:0}}
               whileInView={{ y: 0,opacity:1 }}
               transition={{ duration: 1.5,delay:0.2, type: "spring", }}
               className="bg-black px-12 py-3 text-white font-semibold hover:bg-white hover:text-black "
             >
               Shop Now
-            </motion.button>
+            </motion.button></Link>
           </div>
         </div>
               </div>
@@ -99,8 +119,8 @@ const Home = () => {
                 <Link to='/shop'>
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, scale:0.9}}
+                  whileInView={{ opacity: 1, scale:1}}
                   transition={{ duration: 0.8 }}
                   className="bg-white w-fit  flex flex-col rounded-lg overflow-hidden"
                 >

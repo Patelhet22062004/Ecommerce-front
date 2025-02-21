@@ -16,39 +16,41 @@ import Checkout from './Pages/Checkout';
 import Myorder from './Pages/Myorder'
 import AboutPage from './Pages/About';
 import Orders from './Pages/orders';
+import { CartProvider } from "./CartContext";
+
 const App = () => {
   return (
 
 
     <>
 
-    <Router>
-<div className=''>
-  <Header/>
-</div>
+      <Router>
+      <CartProvider>
+           <div>
+             <Header />
+           </div>
+      </CartProvider>
       <Routes>
-
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/shop" element={<Shop/>} />
-        <Route path="/contact" element={<Contact/>} />
-        <Route path="/Footer" element={<Footer/>} />
-        <Route path="/Detail/:id" element={<ProductDetail/>} />
-        <Route path="/cart" element={<Cart/>} />
-        <Route path='/checkout' element={<Checkout/>}/>
-        <Route path='/myorder' element={<Myorder/>}/>
-        <Route path='/about' element={<AboutPage/>}/>
-        <Route path='/orders' element={<Orders/>}/>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/Footer" element={<Footer />} />
+          <Route path="/Detail/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path='/checkout' element={<Checkout />} />
+          <Route path='/myorder' element={<Myorder />} />
+          <Route path='/about' element={<AboutPage />} />
+          <Route path='/orders' element={<Orders />} />
 
 
-        {/* Protected Routes */}
-        {/* Protected Routes */}
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-      </Routes>
-    </Router>
+          {/* Protected Routes */}
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        </Routes>
+      </Router>
     </>
   );
 };

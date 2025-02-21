@@ -3,13 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../redux/authSlice";
+
 
 function Login() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!username || !password) {
@@ -18,18 +20,10 @@ function Login() {
     }
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/login/", {
-        username,
-        password,
-      });
-
-      console.log(response.data);
-      localStorage.setItem("access_token", response.data.access);
-      localStorage.setItem("refresh_token", response.data.refresh);
-      localStorage.setItem("userid", JSON.stringify(response.data.userid));
-
-      toast.success("✅ Login successful!");
-      navigate("/"); // Redirect after successful login
+      const response = await axios.post("http://127.0.0.1:8000/login/", {username, password,});
+      dispatch(loginSuccess({ userid: JSON.stringify(response.data.userid), token: response.data.access,refresh:response.data.refresh }));
+     toast.success("✅ Login successful!");
+      navigate("/"); 
     } catch (error) {
       toast.error("❌ Invalid credentials, please try again.");
     }
@@ -37,7 +31,6 @@ function Login() {
 
   return (
     <>
-<ToastContainer position="top-right" autoClose={3000} />
 <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
         <h1 className="text-3xl font-bold text-center pb-12 text-gray-700">
           My Account
@@ -93,7 +86,7 @@ function Login() {
               Sign up
             </Link>
           </p>
-        </div>
+        </div><ToastContainer/>
       </div>
     </>
   );
