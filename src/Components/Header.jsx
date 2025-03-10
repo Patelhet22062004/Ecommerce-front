@@ -10,28 +10,23 @@ import { IoIosLogOut } from "react-icons/io";
 
 
 const Header = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { cart } = useContext(CartContext);
   const [menuOpen, setMenuOpen] = useState(false);
   const [count, setcount] = useState();// State for side menu
   const navigate = useNavigate();
-  const { userid, token } = useSelector(state => state.auth)
   const dispatch = useDispatch()
   const menuRef = useRef(null);
-
+// const IsAuthenticated=localStorage.getItem("IsAuthenticated")
   const [profileOpen, setProfileOpen] = useState(false);
   const { quantity } = useSelector(state => state.cart);
-  useEffect(() => {
-    if (token) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-    }
-  }, [localStorage.getItem('access_token')]);
+  const { userid, token, IsAuthenticated } = useSelector((state) => state.auth);
+
+  
   useEffect(() => {
     setcount(cart.length)
   }, [cart])// Dependency on the token
   useEffect(() => {
+    console.log(IsAuthenticated,token)
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
@@ -45,7 +40,6 @@ const Header = () => {
   }, []);
   const handleLogout = () => {
     dispatch(logout())
-    setIsAuthenticated(false);
     setMenuOpen(false)
     navigate('/login');
   };
@@ -65,7 +59,7 @@ const Header = () => {
         </nav>
 
         <div className="hidden md:flex ">
-          {!isAuthenticated ? (
+          {!IsAuthenticated ? (
             <Link
               to="/login"
               className="bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700"
@@ -145,7 +139,7 @@ const Header = () => {
           </div>
 
           <div className="p-6 flex justify-between">
-            {!isAuthenticated ? (
+            {!IsAuthenticated ? (
               <Link
                 to="/login"
                 className="block bg-gray-200 py-2 px-4 rounded text-center hover:bg-gray-600"

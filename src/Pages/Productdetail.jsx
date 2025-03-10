@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import axios from "axios";
 import { toast,ToastContainer } from "react-toastify";
+import axiosInstance from "../service/Axiosconfig";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const token = localStorage.getItem("access_token");
-
+const navigate=useNavigate()
   useEffect(() => {
-    axios
-      .get(`http://127.0.0.1:8000/products/${id}/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get(`products/${id}/`, {
+         })
       .then((response) => {
         setProduct(response.data);
         setSelectedImage(response.data.images.length > 0 ? response.data.images[0].image : "");
@@ -26,9 +26,10 @@ const ProductDetail = () => {
   }, [id, token]);
 
   const handleAddToCart = () => {
-    axios
+    if(token){
+    axiosInstance
       .post(
-        "http://127.0.0.1:8000/cart/",
+        "cart/",
         { product_id: product.id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -36,7 +37,21 @@ const ProductDetail = () => {
         toast.success("Added to cart!");
       })
       .catch((error) => console.error("Error adding product to cart:", error));
-  };
+  }
+  else{
+    toast.error("Login For Access")
+  }}
+  const buynow=()=>{
+    check()
+    handleAddToCart()
+  }
+const check=()=>{
+  if(token){
+  navigate("/cart")
+  }
+  else{
+return  }
+}
 
   if (!product) {
     return <p>Loading...</p>;
@@ -88,9 +103,10 @@ const ProductDetail = () => {
             <button className="bg-yellow-500 text-white py-2 px-6 rounded-md hover:bg-yellow-600 transition duration-300" onClick={handleAddToCart}>
               Add to Cart
             </button>
-           <Link to='/cart'> <button className="border-2 hover:shadow-lg border-blue-500 text-blue-500 py-2 px-6 rounded-md hover:bg-blue-500 hover:text-white transition duration-300"onClick={handleAddToCart}>
+
+          <button className="border-2 hover:shadow-lg border-blue-500 text-blue-500 py-2 px-6 rounded-md hover:bg-blue-500 hover:text-white transition duration-300"onClick={buynow}>
               Buy Now
-            </button></Link> 
+            </button>
           </div>
         </div>
       </div>

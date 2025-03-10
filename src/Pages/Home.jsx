@@ -8,42 +8,47 @@ import Footer from "../Components/Footer";
 import { Link, redirect, useNavigate } from "react-router-dom";
 import { useSelector,useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
+import axiosInstance from "../service/Axiosconfig";
 const Home = () => {
   const [products, setProducts] = useState([]);
-  const {token,userid}=useSelector(state=>state.auth)
+  const {token,userid,IsAthenticated}=useSelector(state=>state.auth)
   const dispatch =useDispatch()
   const navigate=useNavigate()
   useEffect(() => {
-     axios.get("http://localhost:8000/products/"
+     axiosInstance.get("products/"
     )
       .then((response) => {
         setProducts(response.data);
       })
       .catch((error) =>{
-        if(error.response.status==401){
-             dispatch(logout())
-                  }
+
          console.error("Error fetching products:",error)
        
       });
   }, []);
+
   useEffect(()=>{
-    axios.get(`http://127.0.0.1:8000/user/profile/${userid}/`,
-{      headers: { Authorization: `Bearer ${token}` },
+    if(IsAthenticated){
+
+      axiosInstance.get(`user/profile/${userid}/`,
+      )
+        .then((response) => {
+          // console.log(response.data.data)
+          if(response.data.isadmin){
+            navigate('/dashboard')
+          }
+          setProducts(response.data);
+        })
+        .catch((error) =>{
+         
+           console.error("Error fetching :",error)
+         
+        });
+    }
+else{
+   return 
 }
-    )
-      .then((response) => {
-        console.log(response.data.data)
-        if(response.data.isadmin){
-          navigate('/dashboard')
-        }
-        setProducts(response.data);
-      })
-      .catch((error) =>{
-       
-         console.error("Error fetching :",error)
-       
-      });
+    
   }
   ,[])
 

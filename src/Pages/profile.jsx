@@ -11,14 +11,14 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate()
-  const { userid, token ,IsAuthnticated} = useSelector((state) => state.auth);
+  const { userid, token, IsAuthenticated } = useSelector((state) => state.auth);
   // const dispatch = useDispatch();
 
 
   useEffect(() => {
     const fetchProfile = async () => {
-      
-      if (IsAuthnticated==false) {
+      console.log(token,IsAuthenticated ,"GJDFOEFGJHFJDKO")
+      if (!token) {
         setError('User not authenticated. Please log in.');
         setLoading(false);
         return;

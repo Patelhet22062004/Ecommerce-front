@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../service/Axiosconfig';
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
@@ -17,7 +18,7 @@ const RegisterPage = () => {
   const handleSendOtp = async () => {
     setError('');
     try {
-      const response = await axios.post('http://127.0.0.1:8000/send-otp/', { email });
+      const response = await axiosInstance.post('send-otp/', { email });
       if (response.status === 200) {
         alert('OTP sent to your email.');
         setShowOtpField(true);
@@ -30,7 +31,7 @@ const RegisterPage = () => {
   const handleVerifyOtp = async () => {
     setError('');
     try {
-      const response = await axios.post('http://127.0.0.1:8000/verify-otp/', { email, otp });
+      const response = await axiosInstance.post('verify-otp/', { email, otp });
       if (response.status === 200) {
         alert('OTP verified successfully. You can now register.');
         setShowOtpField(false);
@@ -47,7 +48,7 @@ const RegisterPage = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/register/', {
+      const response = await axiosInstance.post('register/', {
         username,
         email,
         password,

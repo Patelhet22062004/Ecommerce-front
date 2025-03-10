@@ -1,4 +1,5 @@
 import React ,{useState,useEffect} from 'react';
+import axiosInstance from '../service/Axiosconfig';
 
 const Dashboard = () => {
     const [user, setFormData] = useState({});
@@ -15,9 +16,8 @@ const Dashboard = () => {
       }
 
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/user/profile/${userId}/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axiosInstance.get(`user/profile/${userId}/`, {
+             });
         setFormData(response.data);
       } catch (err) {
         console.error('Error fetching profile:', err);

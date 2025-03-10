@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
+import axiosInstance from "../service/Axiosconfig";
 
 const Checkout = () => {
   const [cartdata, setCart] = useState([]);
@@ -18,13 +19,12 @@ const Checkout = () => {
   const token = localStorage.getItem("access_token");
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/cart/", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("cart/", { headers: { Authorization: `Bearer ${token}` } }) // Add this!
       .then((response) => setCart(response.data))
       .catch((error) => console.error("Error fetching cart:", error));
   }, [token]);
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -41,8 +41,8 @@ const Checkout = () => {
   const handlePayment = async () => {
     try {
       console.log(token)
-      const response = await axios.post(
-        "http://127.0.0.1:8000/payment/create/",
+      const response = await axiosInstance.post(
+        "payment/create/",
         { amount: totalPrice }, // Send amount in the request body
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -59,8 +59,8 @@ const Checkout = () => {
         handler: async function (paymentResponse) {
           try {
             // Send the Razorpay payment verification request with the correct structure
-            const verifyResponse = await axios.post(
-              "http://127.0.0.1:8000/payment/verify/",
+            const verifyResponse = await axiosInstance.post(
+              "payment/verify/",
               {
                 razorpay_payment_id: paymentResponse.razorpay_payment_id,
                 razorpay_order_id: paymentResponse.razorpay_order_id,
@@ -95,7 +95,7 @@ const Checkout = () => {
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
-      console.error("Payment error:", error);
+      console.error("Payment API Error:", error.response ? error.response.data : error.message);
       alert("Something went wrong. Please try again.");
     }
   };
@@ -103,8 +103,8 @@ const Checkout = () => {
   // Save order to database after successful payment
   const saveOrderToDB = async (order_id, payment_id) => {
     try {
-      await axios.post(
-        "http://127.0.0.1:8000/order/create/",
+      await axiosInstance.post(
+        "order/create/",
         {
           ...orderDetails,
           cart_items: cartdata,

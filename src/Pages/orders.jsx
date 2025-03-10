@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import axiosInstance from "../service/Axiosconfig";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const token = localStorage.getItem("access_token");
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/order/list/", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("order/list/", {
+         })
       .then((response) => setOrders(response.data))
       .catch((error) => console.error("Error fetching orders:", error));
   }, [token]);

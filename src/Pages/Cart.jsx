@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ToastContainer,toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { updateCartItem } from '../redux/productSlice';
+import axiosInstance from '../service/Axiosconfig';
 updateCartItem
 const Cart = () => {
   const [cart, setCart] = useState([]);
@@ -11,7 +12,7 @@ const Cart = () => {
 const dispatch = useDispatch()
   // Fetch the cart from the backend when the component mounts
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/cart/', {
+    axiosInstance.get('cart/', {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(response => {
@@ -22,7 +23,7 @@ const dispatch = useDispatch()
   }, [token, dispatch]);
   
   const handleRemoveFromCart = (productId) => {
-    axios.delete(`http://127.0.0.1:8000/cart/${productId}/`, {
+    axiosInstance.delete(`cart/${productId}/`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(response => {
@@ -44,7 +45,7 @@ const dispatch = useDispatch()
     if (newQuantity <= 0) {
       handleRemoveFromCart(productId);
     } else {
-      axios.post('http://127.0.0.1:8000/cart/', {
+      axiosInstance.post('cart/', {
         product_id: productId,
         quantity: quantityChange,
         total: product_price * newQuantity
@@ -53,7 +54,7 @@ const dispatch = useDispatch()
       })
       .then(response => {
         // Refresh cart to reflect updated quantity
-        axios.get('http://127.0.0.1:8000/cart/', {
+        axiosInstance.get('cart/', {
           headers: { Authorization: `Bearer ${token}` }
         }).then(response => {
           dispatch(updateCartItem({quantity:newQuantity}))

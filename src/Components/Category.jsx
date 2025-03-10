@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {IoMdRefresh} from "react-icons/io"
+import axiosInstance from '../service/Axiosconfig';
 const CategorySidebar = ({ onCategorySelect, onFilterChange }) => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -16,12 +17,10 @@ const CategorySidebar = ({ onCategorySelect, onFilterChange }) => {
 
 
 
-  const token = localStorage.getItem('access_token');
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/categories/', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    axiosInstance.get('categories/', {
+     })
       .then(response => {
         setCategories(response.data);
       })

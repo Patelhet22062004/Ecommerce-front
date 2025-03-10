@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { redirect } from "react-router-dom";
+import axiosInstance from "../service/Axiosconfig";
 
 // import { useHistory } from "react-router-dom";
 
@@ -17,10 +18,9 @@ const MyOrders = () => {
       return;
     }
 
-    axios
-      .get("http://127.0.0.1:8000/payment/orders/", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("payment/orders/", {
+         })
       .then((response) => {
         setOrders(response.data); // Set the orders in state
       })

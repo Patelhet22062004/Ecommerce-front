@@ -7,7 +7,8 @@ const axiosInstance = axios.create({
 const RefreshAccessToken = async () => {
     try {
         const refresh_token = localStorage.getItem('refresh_token')
-        const response = await axiosInstance.post('/accounts/refreshtoken/',{refresh_token})
+        console.log(refresh_token)
+        const response = await axios.post('http://127.0.0.1:8000/accounts/refreshtoken/',{refresh_token})
         const newAccessToken = response.data.access_token
         localStorage.setItem('access_token',newAccessToken)
         return newAccessToken
@@ -42,8 +43,11 @@ axiosInstance.interceptors.response.use(
         return response
     },
     async (error) => {
+        const IsAuthenticated=localStorage.getItem("IsAuthenticated")
+        console.log(IsAuthenticated)
         const OriginalRequest = error.config
-        if (error.response && error.response.status === 401 && !OriginalRequest._retry) {
+        console.log(error.response)
+        if (error.response && error.response.status === 401 && !OriginalRequest._retry&&IsAuthenticated) {
             OriginalRequest._retry = true
             try {
                 const newAccessToken = await RefreshAccessToken()
