@@ -20,7 +20,7 @@ const Checkout = () => {
 
   useEffect(() => {
     axiosInstance
-      .get("cart/", { headers: { Authorization: `Bearer ${token}` } }) // Add this!
+      .get("cart/", { headers: { Authorization: `Bearer ${token}` } }) 
       .then((response) => setCart(response.data))
       .catch((error) => console.error("Error fetching cart:", error));
   }, [token]);
@@ -43,7 +43,7 @@ const Checkout = () => {
       console.log(token)
       const response = await axiosInstance.post(
         "payment/create/",
-        { amount: totalPrice }, // Send amount in the request body
+        { amount: totalPrice },
         { headers: { Authorization: `Bearer ${token}` } }
       );
   
@@ -58,7 +58,6 @@ const Checkout = () => {
         description: "Complete your purchase",
         handler: async function (paymentResponse) {
           try {
-            // Send the Razorpay payment verification request with the correct structure
             const verifyResponse = await axiosInstance.post(
               "payment/verify/",
               {
@@ -71,11 +70,8 @@ const Checkout = () => {
   
             if (verifyResponse.data.status === "success") {
               alert("Payment Successful! 🎉");
-              
-              // Save order to DB after successful payment
-              await saveOrderToDB(order_id, paymentResponse.razorpay_payment_id);
-  
-              // Redirect to the orders page
+              await saveOrderToDB(orderDetails);
+
               navigate("/orders");
             } else {
               alert("Payment Verification Failed!");
@@ -99,37 +95,39 @@ const Checkout = () => {
       alert("Something went wrong. Please try again.");
     }
   };
-  
-  // Save order to database after successful payment
-  const saveOrderToDB = async (order_id, payment_id) => {
-    try {
-      await axiosInstance.post(
-        "order/create/",
-        {
-          ...orderDetails,
-          cart_items: cartdata,
-          razorpay_order_id: order_id,
-          payment_id: payment_id,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert("Order placed successfully!");
-    } catch (error) {
-      console.error("Error saving order:", error);
-      alert("Failed to save the order.");
-    }
-  };
-  
-
+  const handleEdit=async()=>{
+    setStep(1); // Go back to the checkout form
+  }
  
+ // Save order to database after successful payment
+ const saveOrderToDB = async (orderDetails) => {
+  try {
+    await axiosInstance.post(
+      "order/create/",
+      {
+        ...orderDetails,
+        
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    alert("Order placed successfully!");
+  } catch (error) {
+    console.error("Error saving order:", error);
+    alert("Failed to save the order.");
+  }
+};
   const totalPrice = cartdata.reduce((total, item) => total + item.total * 1, 0);
 
   return (
     <div className="bg-gray-100 min-h-screen p-6 lg:p-12">
       <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+       {step == 1? <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
           Checkout
-        </h1>
+        </h1>: 
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        Payment
+      </h1>
+        }
 
         <div className="grid md:grid-cols-2 gap-12">
           <div className="bg-white shadow-md p-6 rounded-md">
@@ -143,7 +141,7 @@ const Checkout = () => {
                     value={formData.full_name}
                     onChange={handleInputChange}
                     placeholder="Full Name"
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 outline-none rounded-md"
                     required
                   />
                   <input
@@ -152,7 +150,7 @@ const Checkout = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="Email"
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 outline-none rounded-md"
                     required
                   />
                   <textarea
@@ -160,7 +158,7 @@ const Checkout = () => {
                     value={formData.address}
                     onChange={handleInputChange}
                     placeholder="Address"
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 outline-none rounded-md"
                     required
                   ></textarea>
                   <input
@@ -169,7 +167,7 @@ const Checkout = () => {
                     value={formData.city}
                     onChange={handleInputChange}
                     placeholder="City"
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 outline-none rounded-md"
                     required
                   />
                   <input
@@ -178,7 +176,7 @@ const Checkout = () => {
                     value={formData.state}
                     onChange={handleInputChange}
                     placeholder="State"
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 outline-none rounded-md"
                     required
                   />
                   <input
@@ -187,12 +185,12 @@ const Checkout = () => {
                     value={formData.zip_code}
                     onChange={handleInputChange}
                     placeholder="Zip Code"
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 outline-none rounded-md"
                     required
                   />
                   <button
                     type="submit"
-                    className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-800"
+                    className="w-full font-semibold  mt-4 border-2 hover:shadow-lg border-blue-500 text-white py-1 hover:text-blue-500  rounded-md hover:bg-white bg-blue-500 hover:text-blue transition duration-300"
                   >
                     Proceed to Payment
                   </button>
@@ -204,12 +202,16 @@ const Checkout = () => {
                 <p><strong>Name:</strong> {orderDetails.full_name}</p>
                 <p><strong>Email:</strong> {orderDetails.email}</p>
                 <p><strong>Address:</strong> {orderDetails.address}, {orderDetails.city}, {orderDetails.state} - {orderDetails.zip_code}</p>
+                
+                <div className="flex gap-5 mt-10">
+                  <button onClick={handleEdit} className= "w-1/2 py-2 font-semibold   border-2 hover:shadow-lg border-blue-500 text-blue-500  rounded-md hover:bg-blue-500 hover:text-white transition duration-300">Edit</button>
+
                 <button
                   onClick={handlePayment}
-                  className="w-full mt-6 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-800"
+                  className="w-1/2 font-semibold   border-2 hover:shadow-lg border-green-500 text-green-500  rounded-md hover:bg-green-500 hover:text-white transition duration-300"
                 >
                   Pay Now
-                </button>
+                </button></div>
               </>
             )}
           </div>
@@ -222,9 +224,14 @@ const Checkout = () => {
               <ul className="space-y-4">
                 {cartdata.map((item) => (
                   <li key={item.id} className="flex justify-between border-b pb-2">
-                    <div>
-                      <h3 className="text-lg font-semibold">{item.product_name}</h3>
-                      <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                    <div className="flex gap-2">
+                    <img 
+                    src={'http://127.0.0.1:8000'+item.product_image} 
+                    alt={item.product_name} 
+                    className="w-16 rounded-lg hover:opacity-75 object-contain" />         
+                   <div className="mt-1"> 
+                    <h3 className="text-lg font-semibold">{item.product_name}</h3>
+                   <p className="text-sm text-gray-500">Qty: {item.quantity}</p></div>
                     </div>
                     <p className="text-lg font-semibold text-gray-700">
                       Rs {item.total}

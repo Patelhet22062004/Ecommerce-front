@@ -19,9 +19,10 @@ const Header = () => {
 // const IsAuthenticated=localStorage.getItem("IsAuthenticated")
   const [profileOpen, setProfileOpen] = useState(false);
   const { quantity } = useSelector(state => state.cart);
-  const { userid, token, IsAuthenticated } = useSelector((state) => state.auth);
-
-  
+  const { token, IsAuthenticated } = useSelector((state) => state.auth);
+  const { items } = useSelector((state) => state.cart);
+console.log(items)
+  // console.log(items)
   useEffect(() => {
     setcount(cart.length)
   }, [cart])// Dependency on the token
@@ -68,12 +69,16 @@ const Header = () => {
             </Link>
           ) : (
             <> 
-              <Link
-                to="/Cart"
-                className=" "
-              >
-                <IoMdCart className="md:size-6  hover:scale-110 ease-in-out transform duration-200  " />
-                </Link> 
+             <Link to="/cart" className="relative">
+      <IoMdCart className="md:size-6 hover:scale-110 transform duration-200" />
+      
+      {/* Badge for cart count */}
+      {items > 0 && ( 
+        <span className="absolute  bg-gray-300 -top-3 -right-3 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+          {items  }
+        </span>
+      )} 
+    </Link>
               <div
                 className="relative "
                 onMouseEnter={() => setProfileOpen(true)}
@@ -89,6 +94,13 @@ const Header = () => {
                       onClick={() => setProfileOpen(false)}
                     >
                       Account
+                    </Link>
+                    <Link
+                      to="/orders"
+                      className="block px-4 py-2 font-bold text-gray-700 hover:bg-gray-100"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      MyOrder
                     </Link>
                     <button
                       onClick={() => {

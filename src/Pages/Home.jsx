@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
-import { motion } from "framer-motion";
+import { delay, motion } from "framer-motion";
 import axios, { AxiosError } from "axios";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Footer from "../Components/Footer";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector,useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
+import { FaStar, FaRegStar, FaStarHalfAlt, FaHeart, FaRegHeart, FaSearch, FaExchangeAlt } from 'react-icons/fa';
 import axiosInstance from "../service/Axiosconfig";
+import DealOfTheWeek from "../Components/Divider";
+import InstagramSection from "../Components/instagram";
+import Banner from "../Components/Banner";
 const Home = () => {
   const [products, setProducts] = useState([]);
   const {token,userid,IsAthenticated}=useSelector(state=>state.auth)
+ 
+  const [wishlist, setWishlist] = useState({});
+   const [hoveredProduct, setHoveredProduct] = useState(null); // Track which product is hovered
   const dispatch =useDispatch()
   const navigate=useNavigate()
   useEffect(() => {
@@ -26,6 +33,24 @@ const Home = () => {
        
       });
   }, []);
+ const renderStars = (rating) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div className="flex text-yellow-400">
+        {[...Array(fullStars)].map((_, i) => <FaStar key={`full-${i}`} />)}
+        {hasHalfStar && <FaStarHalfAlt key="half" />}
+        {[...Array(emptyStars)].map((_, i) => <FaRegStar key={`empty-${i}`} />)}
+      </div>
+    );
+  };
+  const calculateRating = (reviews) => {
+    if (!reviews || reviews.length === 0) return 0;
+    const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+    return total / reviews.length;
+  };
 
   useEffect(()=>{
     if(IsAthenticated){
@@ -52,65 +77,22 @@ else{
   }
   ,[])
 
-  const sliderSettings = {
-    infinite: true,
-    speed: 500,
-    navigator,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
+ 
+  // Animation variants for wishlist & actions
+  const actionVariants = {
+    hidden: { x: 30, opacity: 0 },
+    visible: { x: 0, opacity: 1, transition: { duration: 0.3,delay:0.3, ease: "easeOut" } },
   };
 
+  // "Add to Cart" animation
+  const addEffect = {
+    hidden: { y: -20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.3, ease: "easeOut" } },
+  };
   return (
     <div className="">
       
-      <div className="relative bg-gray-50 overflow-hidden ">
-        <Slider {...sliderSettings}>
-          {[1, 2].map((slide, index) => (
-            <div key={index} className="h-[600px]">
-              <div
-                // initial={{ opacity: 0, scale: 0.9 }}
-                // animate={{ opacity: 1, scale: 1 }}
-                // transition={{ duration: 1 }}
-                className="relative bg-cover bg-center h-full"
-                style={{
-                  backgroundImage: `url('/public/hero-${slide}.jpg')`, // Replace with actual URLs
-                }}
-              >
-                 <div className="absolute inset-0 bg-opacity-50 flex items-center pl-32">
-          <div className="text-center ">
-            <motion.h2
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-4xl font-bold mb-4 "
-            >
-              Discover Your Style
-            </motion.h2>
-            <motion.p
-               initial={{ opacity: 0, y: 80 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               transition={{ duration: 0.7 }}
-              className="mb-8"
-            >
-              Upgrade your wardrobe with our latest collection.
-            </motion.p>
-           <Link to='/shop'> <motion.button
-              initial={{ y: 100 ,opacity:0}}
-              whileInView={{ y: 0,opacity:1 }}
-              transition={{ duration: 1.5,delay:0.2, type: "spring", }}
-              className="bg-black px-12 py-3 text-white font-semibold hover:bg-white hover:text-black "
-            >
-              Shop Now
-            </motion.button></Link>
-          </div>
-        </div>
-              </div>
-            </div>
-          ))}
-        </Slider>
-      </div>
+     <Banner/>
 
       {/* Featured Products Section */}
       <section className="py-16 bg-gray-50">
@@ -120,28 +102,98 @@ else{
           <div className="flex justify-center flex-wrap gap-8">
 
             {products.length > 0 ? (
-              products.map((product, i) => (
-                <Link to='/shop'>
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale:0.9}}
-                  whileInView={{ opacity: 1, scale:1}}
-                  transition={{ duration: 0.8 }}
-                  className="bg-white w-fit  flex flex-col rounded-lg overflow-hidden"
-                >
-                  <img
-                    src={product.image || "https://via.placeholder.com/300x300"}
-                    alt={product.name}
-                    className=" object-cover"
-                  />
-                  <div className="p-10  gap-2 flex flex-col ml-12 w-fit">
-                    <h3 className="text-xl font-semibold">{product.name}</h3>
-                    <p className="text-gray-600">₹{product.price}</p>
-                   
-                  </div>
-                </motion.div>
-                  </Link>
-              )
+              products.map((product, i) => 
+              {   const avgRating = calculateRating(product.reviews);
+                const isOnSale = product.original_price > product.price;
+      
+                return(
+                
+             <Link
+                          key={product.id}
+                          to='/shop'
+                          className="relative max-w-xs bg-white rounded-lg shadow-lg overflow-hidden p4"
+                          onMouseEnter={() => setHoveredProduct(product.id)}
+                          onMouseLeave={() => setHoveredProduct(null)}
+                        >
+                          {/* Product Image */}
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-64 object-cover rounded-t-lg"
+                          />
+            
+                          {/* Wishlist & Action Buttons */}
+                          <div className="absolute top-3 right-3 flex flex-col gap-2">
+                            <motion.button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                toggleWishlist(product.id);
+                              }}
+                              variants={actionVariants}
+                              initial="hidden"
+                              animate={hoveredProduct === product.id ? "visible" : "hidden"}
+                              className="text-xl bg-white p-2 rounded-sm shadow-md"
+                            >
+                              {wishlist[product.id] ? (
+                                <FaHeart className="text-red-500" />
+                              ) : (
+                                <FaRegHeart className="text-gray-600 hover:text-red-500" />
+                              )}
+                            </motion.button>
+            
+                            <motion.button
+                              variants={actionVariants}
+                              initial="hidden"
+                              animate={hoveredProduct === product.id ? "visible" : "hidden"}
+                              className="text-xl  bg-white p-2 rounded-sm shadow-md"
+                            >
+                              <FaSearch className="text-gray-600 " />
+                            </motion.button>
+            
+                            <motion.button
+                              variants={actionVariants}
+                              initial="hidden"
+                              animate={hoveredProduct === product.id ? "visible" : "hidden"}
+                              className="text-xl bg-white p-2 rounded-sm shadow-md"
+                            >
+                              <FaExchangeAlt className="text-gray-600" />
+                            </motion.button>
+                          </div>
+            
+                          <div className="p-4 relative my-3 ">
+                            <motion.div
+                              variants={addEffect}
+                              initial="hidden"
+                              animate={hoveredProduct === product.id ? "visible" : "hidden"}
+                              className="absolute top-2  text-base text-gray-600 font-bold rounded "
+                          >
+                              {product.brand}
+                            </motion.div>
+                            <motion.div
+                              variants={addEffect}
+                              initial="visible"
+                              animate={hoveredProduct === product.id ? "hidden" : "visible"}
+                              className="absolute top-2 text-lg text-gray-800 font-bold rounded"
+                            >
+                              {product.name} 
+                            </motion.div>
+                            <div className="mt-8 flex items-center">
+                  {renderStars(avgRating)}
+                  <span className="ml-2 text-gray-600 text-sm">{product.review}</span>
+                </div>
+
+            
+                            {/* Description */}
+            
+                            {/* Price & Stock */}
+                            <div className="mt-2 flex items-center justify-between">
+                              <p className="text-sm text-gray-600">In Stock: {product.stock}</p>
+                              <p className="text-xl font-bold text-blue-500">₹{product.price}</p>
+
+                            </div>
+                          </div>
+                        </Link>
+              )}
               )
             ) : (
               <p>Loading products...</p>
@@ -150,8 +202,11 @@ else{
           </div>
         </div>
       </section>
-
-      {/* Feedback Section */}
+        <div className="">
+<DealOfTheWeek/>
+<InstagramSection/>
+  
+  </div>      {/* Feedback Section */}
       <section className="py-16 text-black">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-8">What Our Customers Say</h2>

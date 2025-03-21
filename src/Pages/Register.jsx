@@ -1,47 +1,50 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../service/Axiosconfig';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
-  const [username, setUsername] = useState('');
+  const [step, setStep] = useState(1); // Track form step
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [mobile_number, setMobile] = useState('');
   const [otp, setOtp] = useState('');
-  const [showOtpField, setShowOtpField] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
 
   const navigate = useNavigate();
 
+  // Step 1: Send OTP
   const handleSendOtp = async () => {
     setError('');
     try {
-      const response = await axiosInstance.post('send-otp/', { email });
+      const response = await axiosInstance.post('accounts/send-otp/', { email });
       if (response.status === 200) {
         alert('OTP sent to your email.');
-        setShowOtpField(true);
+        setStep(2); // Move to OTP verification step
       }
     } catch (error) {
       setError(error.response?.data?.error || 'Failed to send OTP');
     }
   };
 
+  // Step 2: Verify OTP
   const handleVerifyOtp = async () => {
     setError('');
     try {
-      const response = await axiosInstance.post('verify-otp/', { email, otp });
+      const response = await axiosInstance.post('accounts/verify-otp/', { email, otp });
       if (response.status === 200) {
-        alert('OTP verified successfully. You can now register.');
-        setShowOtpField(false);
+        alert('OTP verified successfully.');
+        setOtpVerified(true);
+        setStep(3); // Move to final registration step
       }
     } catch (error) {
       setError(error.response?.data?.error || 'Invalid OTP');
     }
   };
 
-  // Function to register user
+  // Step 3: Register User
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -53,7 +56,6 @@ const RegisterPage = () => {
         email,
         password,
         mobile_number,
-        otp_code: otp, // Send OTP for verification
       });
 
       if (response.status === 201) {
@@ -69,93 +71,56 @@ const RegisterPage = () => {
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
-      <h1 className="text-3xl font-bold text-center pb-12 text-gray-700">Create New Account</h1>
-      <div className="w-full p-6 mt-12 bg-white rounded-md shadow-2xl lg:max-w-xl">
-        <h2 className="text-xl font-bold text-center text-gray-500 mb-4">Register</h2>
+      <h1 className="text-3xl font-bold text-gray-700">Create New Account</h1>
+      
+      <div className="w-full p-6 mt-6 bg-white rounded-md shadow-xl lg:max-w-xl">
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Username</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="w-full px-4 py-2 border rounded-md mt-1"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 border rounded-md mt-1"
-            />
-            <button
-              type="button"
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-              onClick={handleSendOtp}
-              disabled={showOtpField}
-            >
-              Send OTP
-            </button>
-          </div>
 
-          {showOtpField && (
+        {/* Step 1: User Details Form */}
+        {step === 1 && (
+          <>
+            <h2 className="text-xl font-bold text-center text-gray-500 mb-4">Enter Your Details</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-4 py-2 border rounded-md mt-1" />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Username</label>
+              <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required className="w-full px-4 py-2 border rounded-md mt-1" />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Phone</label>
+              <input type="number" value={mobile_number} onChange={(e) => setMobile(e.target.value)} required className="w-full px-4 py-2 border rounded-md mt-1" />
+            </div>
+            <button onClick={handleSendOtp} className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 w-full">Send OTP</button>
+          </>
+        )}
+
+        {/* Step 2: OTP Verification Form */}
+        {step === 2 && (
+          <>
+            <h2 className="text-xl font-bold text-center text-gray-500 mb-4">Verify OTP</h2>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">Enter OTP</label>
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                required
-                className="w-full px-4 py-2 border rounded-md mt-1"
-              />
-              <button
-                type="button"
-                className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                onClick={handleVerifyOtp}
-              >
-                Verify OTP
-              </button>
+              <input type="text" value={otp} onChange={(e) => setOtp(e.target.value)} required className="w-full px-4 py-2 border rounded-md mt-1" />
             </div>
-          )}
+            <button onClick={handleVerifyOtp} className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 w-full">Verify OTP</button>
+          </>
+        )}
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Phone</label>
-            <input
-              type="number"
-              value={mobile_number}
-              onChange={(e) => setMobile(e.target.value)}
-              required
-              className="w-full px-4 py-2 border rounded-md mt-1"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 border rounded-md mt-1"
-            />
-          </div>
-          <div className="flex flex-col justify-center mb-4">
-            <button
-              type="submit"
-              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-              disabled={loading}
-            >
+        {/* Step 3: Registration Form (Only After OTP Verified) */}
+        {step === 3 && otpVerified && (
+          <>
+            <h2 className="text-xl font-bold text-center text-gray-500 mb-4">Set Your Password</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-4 py-2 border rounded-md mt-1" />
+            </div>
+            <button onClick={handleSubmit} className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 w-full" disabled={loading}>
               {loading ? 'Registering...' : 'Register'}
             </button>
-            <p className="mt-4 text-sm text-center text-gray-700">
-              Already have an account? <Link to="/login" className="font-medium text-blue-600 hover:underline">Sign in</Link>
-            </p>
-          </div>
-        </form>
+          </>
+        )}
       </div>
     </div>
   );

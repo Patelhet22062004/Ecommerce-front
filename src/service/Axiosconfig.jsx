@@ -1,5 +1,6 @@
 import axios from "axios";
-
+import { redirect } from "react-router-dom";
+// const navigate=useNavigate();
 const axiosInstance = axios.create({
     baseURL : 'http://127.0.0.1:8000/',
 })
@@ -15,6 +16,7 @@ const RefreshAccessToken = async () => {
     } catch (error) {
         console.error('Error refreshing access token:', error);
         throw error;
+        
     }
 } 
 
@@ -59,6 +61,7 @@ axiosInstance.interceptors.response.use(
                 return Promise.reject(error.message);
             }
         }
+        redirect("/login");
         console.error('Error:', error)
         return Promise.reject(error)
     }

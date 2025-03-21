@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {IoMdRefresh} from "react-icons/io"
 import axiosInstance from '../service/Axiosconfig';
-const CategorySidebar = ({ onCategorySelect, onFilterChange }) => {
+const CategorySidebar = ({ onCategorySelect,onPriceSelect,onFilterChange }) => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [sizes, setSizes] = useState([]);
@@ -34,9 +34,8 @@ const CategorySidebar = ({ onCategorySelect, onFilterChange }) => {
     onCategorySelect(categoryId);
   };
 
-  const handlePriceChange = (e) => {
-    setPriceRange(e.target.value);
-    onFilterChange({ price: e.target.value });
+  const handlePriceChange = (price) => {
+    onPriceSelect(price)
   };
 
   const handleSizeChange = (e) => {
@@ -83,16 +82,16 @@ const CategorySidebar = ({ onCategorySelect, onFilterChange }) => {
         </h4>
         <div className={`transition-all duration-300 ${isPriceOpen ? 'max-h-96' : 'max-h-0'} overflow-hidden`}>
           <select
-            onChange={handlePriceChange}
+            onChange={(e)=> handlePriceChange(e.target.value)}
             value={priceRange}
             className="w-full p-2 mt-2 bg-white border border-gray-300 rounded"
           >
             <option value="">Select Price Range</option>
-            <option value="0-50">$0 - $50</option>
-            <option value="50-100">$50 - $100</option>
-            <option value="100-200">$100 - $200</option>
-            <option value="200-500">$200 - $500</option>
-            <option value="500+">$500+</option>
+            <option value="0-500">Rs 0 - Rs 500</option>
+            <option value="500-1000">Rs 500 - Rs 1000</option>
+            <option value="1000-2000">Rs 1000 - Rs 2000</option>
+            <option value="2000-5000">Rs 2000 - Rs 5000</option>
+            <option value="5000+">Rs 5000+</option>
           </select>
         </div>
       </div>

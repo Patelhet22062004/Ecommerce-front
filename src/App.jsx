@@ -17,6 +17,7 @@ import Myorder from './Pages/Myorder'
 import AboutPage from './Pages/About';
 import Orders from './Pages/orders';
 import { CartProvider } from "./CartContext";
+import OrderDetails from './Pages/OrderDetail';
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
           <Route path='/myorder' element={<Myorder />} />
           <Route path='/about' element={<AboutPage />} />
           <Route path='/orders' element={<Orders />} />
+          <Route path='/order/:id' element={<OrderDetails />} />
 
 
           {/* Protected Routes */}

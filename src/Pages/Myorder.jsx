@@ -31,7 +31,7 @@ const MyOrders = () => {
   }, [token, history]);
 
   if (error) return <div>{error}</div>;
-  if (!orders.length) return <div>No orders found.</div>;
+  if (!orders.length) return <div>you have not palce order</div>;
 
   return (
     <div className="container mx-auto p-6">

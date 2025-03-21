@@ -7,12 +7,16 @@ import { Navigation } from "swiper/modules";
 import axios from "axios";
 import { toast,ToastContainer } from "react-toastify";
 import axiosInstance from "../service/Axiosconfig";
+import { setItem } from "../redux/productSlice";
+import { useDispatch } from "react-redux";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
+  const [selectedSize,setSelectedSize]= useState()
   const token = localStorage.getItem("access_token");
+  const dispatch=useDispatch();
 const navigate=useNavigate()
   useEffect(() => {
     axiosInstance
@@ -30,11 +34,18 @@ const navigate=useNavigate()
     axiosInstance
       .post(
         "cart/",
-        { product_id: product.id, quantity: 1 },
+        { product_id: product.id, quantity: 1,selectedSize },
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .then(() => {
         toast.success("Added to cart!");
+          axiosInstance.get('cart/', {
+            headers: { Authorization: `Bearer ${token}` }
+          }).then(response => {
+            const totalItems = response.data.length
+            dispatch(setItem(totalItems)); // Update Redux cart count
+          });
+        
       })
       .catch((error) => console.error("Error adding product to cart:", error));
   }
@@ -95,8 +106,28 @@ return  }
           <p className="text-lg mt-4 text-gray-800">{product.description}</p>
           <div className="mt-6 flex items-center">
             <p className="text-xl font-bold text-blue-500">Rs {product.price}</p>
-            <p className="text-sm text-gray-500 ml-20">In Stock: {product.stock}</p>
-          </div>
+            <p className={`text-md ml-5 ${product.stock > 0 ? "text-green-600" : "text-red-500"}`}>
+            {product.stock > 0 ? `In Stock (${product.stock} available)` : "Out of Stock"}
+          </p>          </div>
+                    {/* Size Selection */}
+                    {product.sizes && product.sizes.length > 0 && (
+            <div className="mt-4">
+              <label className="block  text-gray-700 font-semibold mb-2">Select Size:</label>
+              <select
+                className="border outline-none rounded px-4 py-2"
+                value={selectedSize}
+                onChange={(e) => setSelectedSize(e.target.value)}
+              >
+                {product.sizes.map((size, index) => (
+                  <option key={index} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+              <p className="text-gray-700 mt-2">product review {product.review}</p>
+
+            </div>
+          )}
 
           {/* Buttons */}
           <div className="mt-8 flex space-x-4">

@@ -1,10 +1,11 @@
 import React from "react";
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 
 const Footer = () => {
     return (
         <>
             <footer className="bg-slate-100 text-gray-700">
-                <section className="grid grid-cols-1  max-w-7xl mx-auto md:grid-cols-2 lg:grid-cols-4 gap-6 p-10">
+                <section className="grid grid-cols-2  max-w-7xl mx-auto md:grid-cols-3 lg:grid-cols-4 gap-6 p-10">
                     <div>
                         <h2 className="font-bold  text-lg mb-4">About Us</h2>
                         <p className=" text-sm ">
@@ -43,38 +44,20 @@ const Footer = () => {
                     {/* Connect with Us */}
                     <div>
                         <h2 className="font-bold  text-lg mb-4">Connect with Us</h2>
-                        <div className="flex gap-4">
-                            <a
-                                href="#"
-                                className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center hover: text-blue-700 hover:bg-gray-200"
-                            >
-                                <i className="fab fa-facebook-f"></i>
-                            </a>
-                            <a
-                                href="#"
-                                className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center hover: text-pink-600 hover:bg-gray-200"
-                            >
-                                <i className="fab fa-instagram"></i>
-                            </a>
-                            <a
-                                href="#"
-                                className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center hover: text-blue-400 hover:bg-gray-200"
-                            >
-                                <i className="fab fa-twitter"></i>
-                            </a>
-                            <a
-                                href="#"
-                                className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center hover: text-red-600 hover:bg-gray-200"
-                            >
-                                <i className="fab fa-pinterest"></i>
-                            </a>
-                        </div>
+                        <div className=' flex   gap-3 text-black'>
+      
+      <FaLinkedinIn className='hover:text-sky-700'/>
+      <FaInstagram className='hover:text-pink-700'/>
+      <FaXTwitter className='hover:text-slate-700'/>
+      <  FaFacebookF className='hover:text-blue-700'/>
+
+      </div>
                     </div>
                 </section>
 
                 {/* Bottom Footer */}
                 <div className="bg-slate-200 py-4  text-center">
-                    <p className=" text-sm">© 2024 Your Brand Name. All Rights Reserved.</p>
+                    <p className=" text-sm">© 2025 Your Brand Name. All Rights Reserved.</p>
                 </div>
             </footer>
         </>
