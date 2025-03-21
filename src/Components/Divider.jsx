@@ -41,8 +41,8 @@ const DealOfTheWeek = () => {
           alt="Multi-pocket Chest Bag"
           className="w-72 md:w-96"
         />
-        <div className="absolute md:block hidden  top-0 right-0 bg-black text-white text-sm font-bold px-6 py-1 rounded-full">
-          Sale Of <br /> <span className="text-lg">$29.99</span>
+        <div className="absolute md:block hidden  top-0 right-12 bg-black text-white text-sm font-bold px-6 py-2 w-20 h-20 rounded-full">
+           <span className="text-base flex justify-center text-center items-center "> Sale $29.99</span>
         </div>
       </div>
 
