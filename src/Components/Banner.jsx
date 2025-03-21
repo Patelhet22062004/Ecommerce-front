@@ -25,9 +25,6 @@ const Banner = () => {
      autoplay: true,
      autoplaySpeed: 3000,
    };
-
-
-
   return (
     <div className="relative bg-gray-50 overflow-hidden ">
         <Slider {...sliderSettings}>
