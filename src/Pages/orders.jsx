@@ -13,7 +13,7 @@ const Orders = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axiosInstance.get("http://localhost:8000/orders/", {
+      const response = await axiosInstance.get("orders/", {
        
       });
       setOrders(response.data);

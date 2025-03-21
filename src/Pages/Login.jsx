@@ -20,7 +20,7 @@ function Login() {
     }
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/login/", {username, password,});
+      const response = await axios.post("https://ecommerce-backend-18rw.onrender.com/login/", {username, password,});
       dispatch(loginSuccess({ userid: JSON.stringify(response.data.userid), token: response.data.access,refresh:response.data.refresh }));
      toast.success("✅ Login successful!");
       navigate("/"); 

@@ -73,7 +73,7 @@ return  }
       <div className="flex flex-wrap justify-center  gap-20">
         <div className="flex flex-col justify-center ">
           <img
-            src={selectedImage}
+            src={product.image}
             alt={product.name}
             className="w-fit max-w-lg border border-gray-300 rounded-lg"
           />

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import axiosInstance from "../service/Axiosconfig";
 
 const OrderDetails = () => {
@@ -10,7 +9,7 @@ const OrderDetails = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axiosInstance.get("http://localhost:8000/orders/");
+        const response = await axiosInstance.get("orders/");
         const orders = response.data;
 
         // Find the order that matches the ID from URL
