@@ -76,12 +76,7 @@ const Profile = () => {
       <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-md">
         {!isEditing ? (
           <div className="flex flex-col items-center">
-            {!formData.is_admin?(
-<div className="div">Admin</div>
-
-            ):(
-              <p></p>
-            )}
+           
             <img
               className="w-24 h-24 rounded-full "
 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkuHGQcoh2XCa6j_kBji17CIrfC0YMdzKaeyH7nVWmLTK91zTcEeisGgAl_YEZnItoioE&usqp=CAU"
