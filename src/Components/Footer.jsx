@@ -1,6 +1,6 @@
 import React from "react";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
-
+import payment from '../../public/payment.png'
 const Footer = () => {
     return (
         <>
@@ -14,7 +14,7 @@ const Footer = () => {
                             every occasion.
                         </p>
                         <div className="mt-4">
-                            <img src="../../public/payment.png" alt="Payment Methods" className=" max-w-xs" />
+                            <img src={payment} alt="Payment Methods" className=" max-w-xs" />
                         </div>
                     </div>
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-        import div from '../../public/product-sale.png'                                          
+import div from '../../public/product-sale.png'                                          
 const DealOfTheWeek = () => {
   const calculateTimeLeft = () => {
     let difference = +new Date("2025-04-01") - +new Date();
