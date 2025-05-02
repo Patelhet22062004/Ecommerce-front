@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axiosInstance from '../service/Axiosconfig';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1); // Track form step
@@ -21,7 +22,7 @@ const RegisterPage = () => {
     try {
       const response = await axiosInstance.post('accounts/send-otp/', { email });
       if (response.status === 200) {
-        alert('OTP sent to your email.');
+        toast('OTP sent to your email.');
         setStep(2); // Move to OTP verification step
       }
     } catch (error) {
@@ -35,7 +36,7 @@ const RegisterPage = () => {
     try {
       const response = await axiosInstance.post('accounts/verify-otp/', { email, otp });
       if (response.status === 200) {
-        alert('OTP verified successfully.');
+        toast.success('OTP verified successfully.');
         setOtpVerified(true);
         setStep(3); // Move to final registration step
       }
@@ -60,12 +61,12 @@ const RegisterPage = () => {
 
       if (response.status === 201) {
         setLoading(false);
-        alert('Account Created Successfully');
+        toast.success('Account Created Successfully');
         navigate('/login');
       }
     } catch (error) {
       setLoading(false);
-      setError(error.response?.data?.error || 'Registration failed, please try again.');
+      setError(error  || 'Registration failed, please try again.');
     }
   };
 
@@ -74,10 +75,8 @@ const RegisterPage = () => {
       <h1 className="text-3xl font-bold text-gray-700">Create New Account</h1>
       
       <div className="w-full p-6 mt-6 bg-white rounded-md shadow-xl lg:max-w-xl">
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {error && <p className="text-red-500 text-center mb-4">{error.response}</p>}
 
-        {/* Step 1: User Details Form */}
-        {step === 1 && (
           <>
             <h2 className="text-xl font-bold text-center text-gray-500 mb-4">Enter Your Details</h2>
             <div className="mb-4">
@@ -92,26 +91,7 @@ const RegisterPage = () => {
               <label className="block text-sm font-medium text-gray-700">Phone</label>
               <input type="number" value={mobile_number} onChange={(e) => setMobile(e.target.value)} required className="w-full px-4 py-2 border rounded-md mt-1" />
             </div>
-            <button onClick={handleSendOtp} className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 w-full">Send OTP</button>
-          </>
-        )}
-
-        {/* Step 2: OTP Verification Form */}
-        {step === 2 && (
-          <>
-            <h2 className="text-xl font-bold text-center text-gray-500 mb-4">Verify OTP</h2>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Enter OTP</label>
-              <input type="text" value={otp} onChange={(e) => setOtp(e.target.value)} required className="w-full px-4 py-2 border rounded-md mt-1" />
-            </div>
-            <button onClick={handleVerifyOtp} className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 w-full">Verify OTP</button>
-          </>
-        )}
-
-        {/* Step 3: Registration Form (Only After OTP Verified) */}
-        {step === 3 && otpVerified && (
-          <>
-            <h2 className="text-xl font-bold text-center text-gray-500 mb-4">Set Your Password</h2>
+         
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">Password</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-4 py-2 border rounded-md mt-1" />
@@ -120,8 +100,9 @@ const RegisterPage = () => {
               {loading ? 'Registering...' : 'Register'}
             </button>
           </>
-        )}
+        
       </div>
+    <ToastContainer/>
     </div>
   );
 };
