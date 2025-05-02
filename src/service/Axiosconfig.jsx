@@ -2,7 +2,7 @@ import axios from "axios";
 import { redirect } from "react-router-dom";
 // const navigate=useNavigate();
 const axiosInstance = axios.create({
-    baseURL : 'http://127.0.0.1:8000/',
+    baseURL : 'https://ecommerce-backend-18rw.onrender.com',
 })
 
 const RefreshAccessToken = async () => {
