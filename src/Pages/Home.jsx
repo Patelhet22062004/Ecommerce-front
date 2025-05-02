@@ -22,7 +22,7 @@ const Home = () => {
   const dispatch =useDispatch()
   const navigate=useNavigate()
   useEffect(() => {
-     axios.get("http://127.00.1:8000/products/"
+     axios.get("https://ecommerce-backend-18rw.onrender.com/"
     )
       .then((response) => {
         setProducts(response.data);
