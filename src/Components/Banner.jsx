@@ -29,7 +29,7 @@ const Banner = () => {
     <div className="relative bg-gray-50 overflow-hidden ">
         <Slider {...sliderSettings}>
           {[1, 2].map((slide, index) => (
-            <div key={index} className="h-[600px]">
+            <div key={index} className="h-[630px]">
               <div
                 // initial={{ opacity: 0, scale: 0.9 }}
                 // animate={{ opacity: 1, scale: 1 }}

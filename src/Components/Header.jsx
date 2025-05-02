@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/authSlice';
 import { IoIosLogOut } from "react-icons/io";
 
-
+import logo from '../../public/logo.png'
 const Header = () => {
   const { cart } = useContext(CartContext);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -45,9 +45,11 @@ const Header = () => {
   return (
     <header className="shadow-md py-4 px-5 bg-white relative">
       <div className=" flex max-w-7xl mx-auto justify-between items-center">
-        <Link to="/">
+      <Link to="/">
+      <div className="flex w-12">
+        <img src={logo} alt="" classname="  "/>
           <div className="md:text-2xl font-bold">ClothingStore</div>
-        </Link>
+          </div></Link>
 
         <nav className="hidden md:flex space-x-8">
           <Link to="/" className="hover:border-b-2 hover:border-black text-lg font-semibold">Home</Link>
