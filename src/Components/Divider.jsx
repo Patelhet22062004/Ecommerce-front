@@ -52,7 +52,7 @@ const DealOfTheWeek = () => {
         <h2 className="font-bold text-2xl md:text-3xl text-black">Multi-pocket Chest Bag Black</h2>
         <div className="flex justify-center md:justify-start text-2xl font-bold gap-5 mt-4">
           <span className="flex flex-col">{timeLeft.days} <small className="text-sm block">Days </small></span>:
-          <span className="flex flex-col pl-">{timeLeft.hours}<small className="text-sm block">Hours</small></span>:
+          <span className="flex flex-col ">{timeLeft.hours}<small className="text-sm block">Hours</small></span>:
           <span className="flex flex-col">{timeLeft.minutes}  <small className="text-sm block">Minutes</small></span>:
           <span className="flex flex-col">{timeLeft.seconds} <small className="text-sm block">Seconds</small></span>
         </div>

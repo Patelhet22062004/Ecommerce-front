@@ -24,7 +24,7 @@ const Orders = () => {
     }
   };
 
-  if (loading) return <h2 className="text-center mt-10 text-lg">Loading Orders...</h2>;
+  if (loading) return <h2 className="text-center mt-10 text-lg">Please Login Orders...</h2>;
 
   return (
     <div className="max-w-5xl mx-auto p-6">

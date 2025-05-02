@@ -68,7 +68,7 @@ const Profile = () => {
     }
   };
 
-  if (loading) return <div className="flex justify-center items-center h-screen text-xl">Loading...</div>;
+  if (loading) return <div className="flex justify-center items-center h-screen text-xl">Please Login...</div>;
   if (error) return <div className="flex justify-center items-center text-red-500">{error}</div>;
 
   return (

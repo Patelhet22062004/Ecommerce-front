@@ -21,13 +21,10 @@ const Header = () => {
   const { quantity } = useSelector(state => state.cart);
   const { token, IsAuthenticated } = useSelector((state) => state.auth);
   const { items } = useSelector((state) => state.cart);
-console.log(items)
-  // console.log(items)
   useEffect(() => {
     setcount(cart.length)
-  }, [cart])// Dependency on the token
+  }, [cart])
   useEffect(() => {
-    console.log(IsAuthenticated,token)
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);

@@ -2,14 +2,14 @@ import axios from "axios";
 import { redirect } from "react-router-dom";
 // const navigate=useNavigate();
 const axiosInstance = axios.create({
-    baseURL : 'https://ecommerce-backend-18rw.onrender.com/',
+    baseURL : 'http://127.0.0.1:8000/',
 })
 
 const RefreshAccessToken = async () => {
     try {
         const refresh_token = localStorage.getItem('refresh_token')
         console.log(refresh_token)
-        const response = await axios.post('https://ecommerce-backend-18rw.onrender.com/accounts/refreshtoken/',{refresh_token})
+        const response = await axios.post('http://127.0.0.1:8000/accounts/refreshtoken/',{refresh_token})
         const newAccessToken = response.data.access_token
         localStorage.setItem('access_token',newAccessToken)
         return newAccessToken

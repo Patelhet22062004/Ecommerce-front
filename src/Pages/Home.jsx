@@ -15,14 +15,14 @@ import InstagramSection from "../Components/instagram";
 import Banner from "../Components/Banner";
 const Home = () => {
   const [products, setProducts] = useState([]);
-  const {token,userid,IsAthenticated}=useSelector(state=>state.auth)
+  const {userid,IsAthenticated}=useSelector(state=>state.auth)
  
   const [wishlist, setWishlist] = useState({});
    const [hoveredProduct, setHoveredProduct] = useState(null); // Track which product is hovered
   const dispatch =useDispatch()
   const navigate=useNavigate()
   useEffect(() => {
-     axiosInstance.get("products/"
+     axios.get("http://127.00.1:8000/products/"
     )
       .then((response) => {
         setProducts(response.data);
@@ -196,7 +196,7 @@ else{
               )}
               )
             ) : (
-              <p>Loading products...</p>
+              <p>Please Login products...</p>
             )}
           </div>
           </div>

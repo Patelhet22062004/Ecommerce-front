@@ -19,8 +19,8 @@ const ProductDetail = () => {
   const dispatch=useDispatch();
 const navigate=useNavigate()
   useEffect(() => {
-    axiosInstance
-      .get(`products/${id}/`, {
+    axios
+      .get(`http://127.0.0.1:8000/products/${id}/`, {
          })
       .then((response) => {
         setProduct(response.data);
@@ -65,7 +65,7 @@ return  }
 }
 
   if (!product) {
-    return <p>Loading...</p>;
+    return <p>Please Login...</p>;
   }
 
   return (

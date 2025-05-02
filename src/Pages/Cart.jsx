@@ -56,7 +56,7 @@ const Cart = () => {
             headers: { Authorization: `Bearer ${token}` }
           }).then(response => {
             setCart(response.data);
-            const totalItems = response.data.l=length
+            const totalItems = response.data.length
             dispatch(setItem(totalItems)); // Update Redux cart count
           });
         })
@@ -64,7 +64,6 @@ const Cart = () => {
     }
   };
 
-  const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = cart.reduce((total, item) => total + item.product_price * item.quantity, 0);
 
   return (

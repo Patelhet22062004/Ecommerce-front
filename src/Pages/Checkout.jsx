@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
 import axiosInstance from "../service/Axiosconfig";
+import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from "react-toastify";
 
 const Checkout = () => {
   const [cartdata, setCart] = useState([]);
@@ -69,16 +71,17 @@ const Checkout = () => {
             );
   
             if (verifyResponse.data.status === "success") {
-              alert("Payment Successful! 🎉");
+              toast.success("Payment Successful! 🎉");
               await saveOrderToDB(orderDetails);
 
               navigate("/orders");
             } else {
-              alert("Payment Verification Failed!");
+              toast.error("Payment Verification Failed!");
             }
+         
           } catch (error) {
             console.error("Verification error:", error);
-            alert("Payment verification failed. Please contact support.");
+            toast.error("Payment verification failed. Please contact support.");
           }
         },
         prefill: {
@@ -110,16 +113,18 @@ const Checkout = () => {
       },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    alert("Order placed successfully!");
+    toast.success("Order placed successfully!");
   } catch (error) {
     console.error("Error saving order:", error);
     alert("Failed to save the order.");
   }
 };
+
   const totalPrice = cartdata.reduce((total, item) => total + item.total * 1, 0);
 
-  return (
+  return (<>
     <div className="bg-gray-100 min-h-screen p-6 lg:p-12">
+
       <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-8">
        {step == 1? <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
           Checkout
@@ -247,7 +252,8 @@ const Checkout = () => {
           </div>
         </div>
       </div>
-    </div>
+   <ToastContainer/>
+    </div></>
   );
 };
 
