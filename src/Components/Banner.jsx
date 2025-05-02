@@ -36,7 +36,7 @@ const Banner = () => {
                 // transition={{ duration: 1 }}
                 className="relative bg-cover bg-center h-full"
                 style={{
-                  backgroundImage: `url('/public/banner-${slide}.jpg')`, // Replace with actual URLs
+                  backgroundImage: `url('/banner-${slide}.jpg')`, // Replace with actual URLs
                 }}
               >
                  <div className="absolute  inset-0 bg-opacity-50 flex items-center sm:pl-32">
