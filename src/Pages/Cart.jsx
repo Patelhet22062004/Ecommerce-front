@@ -85,7 +85,7 @@ const Cart = () => {
               <div key={item.product_id} className="flex items-center justify-between border-b pb-4">
                 <div className="flex flex-wrap">
                   <img
-                    src={'https://ecommerce-backend-18rw.onrender.com/' + item.product_image}
+                    src={'https://ecommerce-backend-18rw.onrender.com' + item.product_image}
                     alt={item.product_name}
                     className="md:w-32 w-24 rounded hover:opacity-75 object-contain"
                   />
