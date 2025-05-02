@@ -20,7 +20,7 @@ const ProductDetail = () => {
 const navigate=useNavigate()
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/products/${id}/`, {
+      .get(`https://ecommerce-backend-18rw.onrender.com//products/${id}/`, {
          })
       .then((response) => {
         setProduct(response.data);

@@ -16,8 +16,8 @@ const ProductList = ({ selectedCategory,selectedPrice }) => {
     const fetchProducts = async () => {
       try {
         const url = selectedCategory
-          ? `http://127.0.0.1:8000/products/?category=${selectedCategory}`
-          : 'http://127.0.0.1:8000/products/';
+          ? `https://ecommerce-backend-18rw.onrender.com//products/?category=${selectedCategory}`
+          : 'https://ecommerce-backend-18rw.onrender.com//products/';
         const response = await axios.get(url);
         setProducts(response.data);
       } catch (error) {
