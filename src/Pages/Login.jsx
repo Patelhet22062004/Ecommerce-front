@@ -18,11 +18,11 @@ function Login() {
       toast.warn("⚠️ Please fill in all required fields.");
       return;
     }
-
+ 
     try {
-      const response = await axios.post("https://ecommerce-backend-18rw.onrender.com/login/", {username, password,});
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/login/`, {username, password,});
       dispatch(loginSuccess({ userid: JSON.stringify(response.data.userid), token: response.data.access,refresh:response.data.refresh }));
-     toast.success("✅ Login successful!");
+     toast("✅ Login successful!");
       navigate("/"); 
     } catch (error) {
       toast.error("❌ Invalid credentials, please try again.");
