@@ -76,8 +76,9 @@ const RegisterPage = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
+              placeholder="example@gmail.com"
               required
+              formNoValidate
               className="w-full px-4 py-2 border rounded-md mb-4"
             />
             <button onClick={handleSendOtp} className="w-full bg-blue-500 text-white py-2 rounded-md">
@@ -88,7 +89,7 @@ const RegisterPage = () => {
 
         {step === 2 && (
           <>
-            <h2 className="text-xl font-bold text-center text-gray-500 mb-4">Step 2: Verify OTP</h2>
+            <h2 className="text-xl font-bold text-center text-gray-500 mb-4">Step 2: OTP is send on {email} <br></br> please enter to verify</h2>
             <input
               type="text"
               value={otp}
