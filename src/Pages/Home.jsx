@@ -17,7 +17,10 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const {userid,IsAthenticated}=useSelector(state=>state.auth)
    const baseURL = import.meta.env.VITE_BACKEND_URL;
-   const [hoveredProduct, setHoveredProduct] = useState(null);
+
+  const [wishlist, setWishlist] = useState({});
+   const [hoveredProduct, setHoveredProduct] = useState(null); // Track which product is hovered
+  const dispatch =useDispatch()
   const navigate=useNavigate()
   useEffect(() => {
         axios.get(`${baseURL}/products/`
