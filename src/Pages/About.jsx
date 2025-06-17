@@ -6,14 +6,14 @@ const AboutPage = () => {
   return (
     <div className="bg-gray-50 text-gray-800 font-sans">
       {/* Hero Section */}
-      <section className="relative bg-cover h-[60vh] text-white flex items-center justify-center" style={{ backgroundImage: "url('./public/about.jpg')" }}>
+      <section className="relative bg-cover h-[60vh] text-white flex items-center justify-center" style={{ backgroundImage: "url('./about.jpg')" }}>
         <div className="absolute inset-0 bg-black opacity-40"></div>
         <div className="z-10 text-center px-6 py-12">
           <h1 className="text-3xl md:text-5xl font-extrabold mb-4 leading-tight tracking-tight">
             Stylish Clothing. Timeless Elegance.
           </h1>
           <p className="text-lg md:text-2xl mb-4">
-            Discover the latest trends with our unique collection of stylish clothes.
+            Discover the latest trends with our unique collection of stylish cloth.
           </p>
           
         </div>
