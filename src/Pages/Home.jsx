@@ -95,7 +95,7 @@ else{
       {/* Featured Products Section */}
       <section className="py-16 bg-gray-50">
         <div className=" mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-8">Featured Products</h2>
+          <h2 className="text-3xl font-bold mb-8">Featured Product</h2>
           <div className="">
           <div className="flex justify-center flex-wrap gap-8">
 
