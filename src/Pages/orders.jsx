@@ -14,7 +14,6 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       const response = await axiosInstance.get("orders/", {
-       
       });
       setOrders(response.data);
     } catch (error) {
@@ -23,9 +22,7 @@ const Orders = () => {
       setLoading(false);
     }
   };
-
   if (loading) return <h2 className="text-center mt-10 text-lg">Please Login Orders...</h2>;
-
   return (
     <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Your Orders</h1>
