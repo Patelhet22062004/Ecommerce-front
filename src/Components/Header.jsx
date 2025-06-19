@@ -52,10 +52,26 @@ const Header = () => {
           </div></Link>
 
         <nav className="hidden md:flex space-x-8">
-          <Link to="/" className="hover:border-b-2 hover:border-black text-lg font-semibold">Home</Link>
-          <Link to="/shop" className="hover:border-b-2 hover:border-black text-lg font-semibold">Shop</Link>
-          <Link to="/about" className="hover:border-b-2 hover:border-black text-lg font-semibold">About</Link>
-          <Link to="/contact" className="  hover:border-b-2 hover:border-black  text-lg font-semibold">Contact</Link>
+<Link to="/" className="group relative text-lg font-semibold">
+  Home
+  <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+</Link>
+
+<Link to="/shop" className="group relative text-lg font-semibold">
+  Shop
+  <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+</Link>
+
+<Link to="/about" className="group relative text-lg font-semibold">
+  About
+  <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+</Link>
+
+<Link to="/contact" className="group relative text-lg font-semibold">
+  Contact
+  <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-orange-500  transition-all duration-300 group-hover:w-full"></span>
+</Link>
+
         </nav>
 
         <div className="hidden md:flex ">

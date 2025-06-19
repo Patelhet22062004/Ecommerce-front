@@ -1,10 +1,8 @@
 import axios from "axios";
 import { redirect } from "react-router-dom";
-// const navigate=useNavigate();
 const axiosInstance = axios.create({
     baseURL : import.meta.env.VITE_BACKEND_URL
 })
-
 const RefreshAccessToken = async () => {
     try {
         const refresh_token = localStorage.getItem('refresh_token')
@@ -14,12 +12,12 @@ const RefreshAccessToken = async () => {
         localStorage.setItem('access_token',newAccessToken)
         return newAccessToken
     } catch (error) {
+        console.log("et")
         console.error('Error refreshing access token:', error);
+        redirect('/login')
         throw error;
-        
     }
 } 
-
 axiosInstance.interceptors.request.use(
     async (config) => {
         const access_token = localStorage.getItem('access_token')
@@ -30,7 +28,6 @@ axiosInstance.interceptors.request.use(
                 "Content-Type": !contentType && "application/json",
                 "Authorization": `Bearer ${access_token}`
             }
-          
         }
         return config
     },
@@ -39,7 +36,6 @@ axiosInstance.interceptors.request.use(
         return Promise.reject(error)
     }
 )
-
 axiosInstance.interceptors.response.use(
     (response) => {
         return response
@@ -47,7 +43,7 @@ axiosInstance.interceptors.response.use(
     async (error) => {
         const IsAuthenticated=localStorage.getItem("IsAuthenticated")
         const OriginalRequest = error.config
-        console.log(error.response)
+        console.log(error.response,'a')
         if (error.response && error.response.status === 401 && !OriginalRequest._retry&&IsAuthenticated) {
             OriginalRequest._retry = true
             try {
@@ -65,5 +61,4 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error)
     }
 )
-
 export default axiosInstance;

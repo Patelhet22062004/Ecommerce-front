@@ -14,7 +14,6 @@ const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
     const baseURL = import.meta.env.VITE_BACKEND_URL;
-
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedSize,setSelectedSize]= useState()
   const token = localStorage.getItem("access_token");
